@@ -5,9 +5,10 @@ import java.io.PrintWriter;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Try {
-
 
 
 
@@ -20,12 +21,6 @@ public class Try {
 
 
     public static void connection() throws IOException {
-
-
-        ServerSocket sc = new ServerSocket(1234);
-        Scanner scanner;
-        PrintWriter out;
-
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
         while(nets.hasMoreElements())
         {
@@ -39,23 +34,23 @@ public class Try {
             }
         }
 
-
-
-        Socket client= sc.accept();
-        System.out.println(client.getInetAddress().getHostAddress());
-        scanner = new Scanner(client.getInputStream());
-        out = new PrintWriter(client.getOutputStream());
-
-
-
-        while(!scanner.nextLine().equalsIgnoreCase("quit")){
-            out.println("Hello");
-            out.flush();
+        ServerSocket sc;
+        try{   sc = new ServerSocket(1234);} catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        scanner.close();
-        out.close();
-        client.close();
-        sc.close();
+
+        ExecutorService executor = Executors.newCachedThreadPool();
+        while(true){
+            System.out.println("Waiting for connection");
+            try{
+                Socket socket= sc.accept();
+                System.out.println(socket.getInetAddress().getHostAddress());
+                executor.submit(new TryMultiThreaded(socket));
+            }catch (IOException e){
+                break;
+            }
+        }
+        executor.shutdown();
     }
 
 }
