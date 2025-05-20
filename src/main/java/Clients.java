@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -7,7 +6,7 @@ import java.util.Scanner;
 
 public class Clients {
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("127.0.0.1",1234);
+        Socket socket = new Socket("192.168.1.214",1234);
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         Model model = new Model("Giacomo",10);

@@ -11,10 +11,11 @@ import java.util.concurrent.Executors;
 public class Try {
 
 
-
-
     public static void main(String[] args) throws IOException {
-        try{connection();}catch (IOException e){System.out.println(e.getMessage());
+        try {
+            connection();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
     }
@@ -22,31 +23,31 @@ public class Try {
 
     public static void connection() throws IOException {
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-        while(nets.hasMoreElements())
-        {
-            NetworkInterface networkInterface =  nets.nextElement();
+        while (nets.hasMoreElements()) {
+            NetworkInterface networkInterface = nets.nextElement();
             Enumeration<InetAddress> enumeration = networkInterface.getInetAddresses();
-            while (enumeration.hasMoreElements())
-            {
-                InetAddress ip =  enumeration.nextElement();
-                if(ip.isSiteLocalAddress())
+            while (enumeration.hasMoreElements()) {
+                InetAddress ip = enumeration.nextElement();
+                if (ip.isSiteLocalAddress())
                     System.out.println(ip.getHostAddress());
             }
         }
 
         ServerSocket sc;
-        try{   sc = new ServerSocket(1234);} catch (IOException e) {
+        try {
+            sc = new ServerSocket(1234);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         ExecutorService executor = Executors.newCachedThreadPool();
-        while(true){
+        while (true) {
             System.out.println("Waiting for connection");
-            try{
-                Socket socket= sc.accept();
+            try {
+                Socket socket = sc.accept();
                 System.out.println(socket.getInetAddress().getHostAddress());
                 executor.submit(new TryMultiThreaded(socket));
-            }catch (IOException e){
+            } catch (IOException e) {
                 break;
             }
         }
